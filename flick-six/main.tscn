@@ -1,0 +1,56 @@
+[gd_scene format=3 uid="uid://c2k72b8uijuk2"]
+
+[ext_resource type="Script" uid="uid://stwcto5fn521" path="res://main.gd" id="1_main"]
+
+[sub_resource type="Environment" id="Environment_main"]
+background_mode = 1
+background_color = Color(0.53, 0.81, 0.92, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.65, 0.65, 0.65, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_grass"]
+albedo_color = Color(0.24, 0.55, 0.28, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_pitch"]
+albedo_color = Color(0.78, 0.72, 0.58, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_stump"]
+albedo_color = Color(0.85, 0.65, 0.35, 1)
+
+[node name="Main" type="Node3D" unique_id=1571650711]
+script = ExtResource("1_main")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1841134990]
+environment = SubResource("Environment_main")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1821808701]
+transform = Transform3D(0.866025, -0.353553, 0.353553, 0, 0.707107, 0.707107, -0.5, -0.612372, 0.612372, 0, 15, 0)
+shadow_enabled = true
+
+[node name="Ground" type="CSGBox3D" parent="." unique_id=1622940242]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, -10)
+size = Vector3(90, 0.2, 90)
+material = SubResource("StandardMaterial3D_grass")
+
+[node name="Pitch" type="CSGBox3D" parent="." unique_id=555449725]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, -10)
+size = Vector3(3.05, 0.22, 20.12)
+material = SubResource("StandardMaterial3D_pitch")
+
+[node name="CreaseLine" type="CSGBox3D" parent="." unique_id=765275925]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.12, -1.22)
+size = Vector3(2.44, 0.02, 0.08)
+
+[node name="StumpsStriker" type="CSGBox3D" parent="." unique_id=1724934441]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+size = Vector3(0.23, 0.71, 0.05)
+material = SubResource("StandardMaterial3D_stump")
+
+[node name="StumpsBowler" type="CSGBox3D" parent="." unique_id=679158440]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, -20.12)
+size = Vector3(0.23, 0.71, 0.05)
+material = SubResource("StandardMaterial3D_stump")
+
+[node name="StrikerCamera" type="Camera3D" parent="." unique_id=353646348]
+transform = Transform3D(1, 0, 0, 0, 0.9848078, 0.17364796, 0, -0.17364796, 0.9848078, 0, 2.1073864, 3.4255)
+current = true
