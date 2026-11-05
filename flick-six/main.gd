@@ -43,7 +43,7 @@ func _ready() -> void:
 	launch_ball()
 
 func setup_subsystems() -> void:
-	var cam_script = load("res://animations/camera_animator.gd")
+	var cam_script = load("res://camera_adjustments/camera_controller.gd")
 	cam_anim = cam_script.new()
 	cam_anim.setup(camera)
 	add_child(cam_anim)
@@ -55,6 +55,7 @@ func setup_subsystems() -> void:
 	var ind_script = load("res://indicators.gd")
 	indicators = ind_script.new()
 	indicators.loft_toggled.connect(func(lofted): is_lofted = lofted)
+	indicators.camera_cycle_requested.connect(cycle_camera)
 	indicators.physics_changed.connect(func(power, friction, pace, loft):
 		hit_power = power
 		grass_friction = friction
@@ -188,6 +189,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		launch_ball()
 		return
 	
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_C:
+		cycle_camera()
+		return
+	
 	if event.is_action_pressed("ui_focus_next"):
 		indicators.toggle_tweak_panel()
 		return
@@ -258,3 +263,8 @@ func execute_hit(dir_2d: Vector2, speed: float, rating: String, col: Color, forc
 	var shot_dir = Vector3(shot_x, shot_y, shot_z).normalized()
 	ball_vel = shot_dir * speed
 	cam_anim.trigger_shot_pan(shot_dir)
+
+func cycle_camera() -> void:
+	if cam_anim and indicators:
+		var mode_name = cam_anim.cycle_mode()
+		indicators.update_cam_label(mode_name)

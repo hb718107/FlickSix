@@ -2,9 +2,11 @@ extends CanvasLayer
 
 signal loft_toggled(is_lofted: bool)
 signal physics_changed(power: float, friction: float, pace: float, loft: float)
+signal camera_cycle_requested
 
 var toggle_btn: Button
 var tweak_btn: Button
+var cam_btn: Button
 var tweak_panel: PanelContainer
 var feedback_lbl: Label
 var feedback_timer: float = 0.0
@@ -28,6 +30,7 @@ func build_ui() -> void:
 	toggle_btn.text = "[ GROUND ]"
 	toggle_btn.position = Vector2(24, 1160)
 	toggle_btn.size = Vector2(160, 56)
+	toggle_btn.focus_mode = Control.FOCUS_NONE
 	toggle_btn.add_theme_font_size_override("font_size", 20)
 	toggle_btn.add_theme_color_override("font_color", Color(1.0, 0.88, 0.2))
 	toggle_btn.pressed.connect(_on_toggle_pressed)
@@ -37,10 +40,21 @@ func build_ui() -> void:
 	tweak_btn.text = "[ TWEAK ]"
 	tweak_btn.position = Vector2(536, 1160)
 	tweak_btn.size = Vector2(160, 56)
+	tweak_btn.focus_mode = Control.FOCUS_NONE
 	tweak_btn.add_theme_font_size_override("font_size", 20)
 	tweak_btn.add_theme_color_override("font_color", Color(0.4, 0.9, 1.0))
 	tweak_btn.pressed.connect(toggle_tweak_panel)
 	add_child(tweak_btn)
+	
+	cam_btn = Button.new()
+	cam_btn.text = "[ CAM: BROADCAST ]"
+	cam_btn.position = Vector2(24, 40)
+	cam_btn.size = Vector2(220, 50)
+	cam_btn.focus_mode = Control.FOCUS_NONE
+	cam_btn.add_theme_font_size_override("font_size", 18)
+	cam_btn.add_theme_color_override("font_color", Color(0.9, 0.9, 0.9))
+	cam_btn.pressed.connect(func(): camera_cycle_requested.emit())
+	add_child(cam_btn)
 	
 	feedback_lbl = Label.new()
 	feedback_lbl.text = ""
@@ -76,6 +90,7 @@ func build_tweak_panel() -> void:
 	power_slider.max_value = 85.0
 	power_slider.step = 1.0
 	power_slider.value = current_power
+	power_slider.focus_mode = Control.FOCUS_NONE
 	power_slider.value_changed.connect(func(val):
 		current_power = val
 		power_lbl.text = "Hit Power: " + str(snapped(val, 0.1))
@@ -91,6 +106,7 @@ func build_tweak_panel() -> void:
 	friction_slider.max_value = 0.995
 	friction_slider.step = 0.005
 	friction_slider.value = current_friction
+	friction_slider.focus_mode = Control.FOCUS_NONE
 	friction_slider.value_changed.connect(func(val):
 		current_friction = val
 		friction_lbl.text = "Turf Roll (Friction): " + str(snapped(val, 0.005))
@@ -106,6 +122,7 @@ func build_tweak_panel() -> void:
 	pace_slider.max_value = 1.10
 	pace_slider.step = 0.05
 	pace_slider.value = current_pace
+	pace_slider.focus_mode = Control.FOCUS_NONE
 	pace_slider.value_changed.connect(func(val):
 		current_pace = val
 		pace_lbl.text = "Bowler Flight Time: " + str(snapped(val, 0.05)) + "s"
@@ -121,6 +138,7 @@ func build_tweak_panel() -> void:
 	loft_slider.max_value = 0.9
 	loft_slider.step = 0.05
 	loft_slider.value = current_loft
+	loft_slider.focus_mode = Control.FOCUS_NONE
 	loft_slider.value_changed.connect(func(val):
 		current_loft = val
 		loft_lbl.text = "Loft Angle Height: " + str(snapped(val, 0.05))
@@ -148,6 +166,10 @@ func show_feedback(txt: String, col: Color) -> void:
 	feedback_lbl.text = txt
 	feedback_lbl.add_theme_color_override("font_color", col)
 	feedback_timer = 1.4
+
+func update_cam_label(cam_name: String) -> void:
+	if cam_btn:
+		cam_btn.text = "[ CAM: " + cam_name + " ]"
 
 func _process(delta: float) -> void:
 	if feedback_timer > 0.0:

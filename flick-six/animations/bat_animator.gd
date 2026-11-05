@@ -1,7 +1,7 @@
 extends Node3D
 
-var default_pos: Vector3 = Vector3(0.20, 0.71, -0.6)
-var default_rot: Vector3 = Vector3(-0.15, -0.25, 0.08)
+var default_pos: Vector3 = Vector3(0.20, 0.78, -0.62)
+var default_rot: Vector3 = Vector3(-0.25, -0.32, 0.12)
 
 var blade: MeshInstance3D
 var handle: MeshInstance3D
@@ -41,15 +41,20 @@ func reset_stance() -> void:
 
 func play_swing(swipe_dir: Vector2) -> void:
 	var tween = create_tween()
-	var swing_angle_y = -swipe_dir.x * 1.5
-	var swing_angle_x = -1.2
-	var target_rot = Vector3(swing_angle_x, swing_angle_y, -0.5)
+	var sweep_x = swipe_dir.x * 0.35
+	var sweep_y = -swipe_dir.y * 0.15
+	var target_pos = default_pos + Vector3(sweep_x, sweep_y + 0.12, -0.40)
+	
+	var rot_y = -swipe_dir.x * 1.8
+	var rot_x = -0.9 + (swipe_dir.y * 0.4)
+	var rot_z = -0.5
+	var target_rot = Vector3(rot_x, rot_y, rot_z)
 	
 	tween.set_parallel(true)
-	tween.tween_property(self, "rotation", target_rot, 0.12).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	tween.tween_property(self, "position", default_pos + Vector3(swipe_dir.x * 0.15, 0.08, -0.25), 0.12)
+	tween.tween_property(self, "rotation", target_rot, 0.13).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_property(self, "position", target_pos, 0.13).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	
-	tween.chain().tween_interval(0.1)
+	tween.chain().tween_interval(0.12)
 	tween.tween_property(self, "rotation", default_rot, 0.28).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
-	tween.parallel().tween_property(self, "position", default_pos, 0.28)
+	tween.parallel().tween_property(self, "position", default_pos, 0.28).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
 
